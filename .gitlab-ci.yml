@@ -28,6 +28,10 @@ stages:
   rules:
     - if: '$CI_COMMIT_TAG == null && $CI_COMMIT_TITLE !~ /^chore: release/'
 
+.default-release-rules: &default-release-rules
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null && $CI_COMMIT_TITLE !~ /^chore: release/'
+
 # === Jobs ===
 
 install:
@@ -74,8 +78,7 @@ e2e-test:
 release:
   stage: release
   when: manual
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null && $CI_COMMIT_TITLE !~ /^chore: release/'
+  <<: *default-release-rules
   before_script:
     - git config user.email "$GITLAB_USER_EMAIL"
     - git config user.name "$GITLAB_USER_NAME"
