@@ -48,10 +48,19 @@ unit-test:
 
 e2e-test:
   stage: test
+  needs: 
+    - integration-test
   rules:
     - if: '$CI_MERGE_REQUEST_ID'
   script:
     - echo "Hello E2E !"
+
+integration-test: 
+  stage: test
+  needs: 
+    - unit-test
+  script: 
+    - echo "Hello Integration !"
 
 release:
   stage: release
