@@ -46,22 +46,23 @@ unit-test:
   script:
     - npm test
 
+integration-test: 
+  stage: test
+  needs:
+    - job: unit-test
+      optional: true
+  script: 
+    - echo "Hello Integration !"
+
 e2e-test:
   stage: test
   needs: 
-    - integration-test
+    - job: integration-test
+      optional: true
   rules:
     - if: '$CI_MERGE_REQUEST_ID'
   script:
     - echo "Hello E2E !"
-
-integration-test: 
-  stage: test
-  needs:
-    - job: integration-test
-      optional: true
-  script: 
-    - echo "Hello Integration !"
 
 release:
   stage: release
