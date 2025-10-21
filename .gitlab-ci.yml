@@ -57,8 +57,9 @@ e2e-test:
 
 integration-test: 
   stage: test
-  needs: 
-    - unit-test
+  needs:
+    - job: integration-test
+      optional: true
   script: 
     - echo "Hello Integration !"
 
