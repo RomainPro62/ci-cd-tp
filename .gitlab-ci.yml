@@ -32,6 +32,8 @@ lint:
 
 only-canary: 
   stage: validate
+  variables:
+    ENV_TARGET: "canary"
   rules:
     - if: '$ENV_TARGET == "canary"'
   script: 
