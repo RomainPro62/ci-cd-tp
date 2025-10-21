@@ -22,4 +22,5 @@ install:
 lint:
   stage: validate
   script:
+    - npm ci --cache .npm --prefer-offline
     - npm run lint
