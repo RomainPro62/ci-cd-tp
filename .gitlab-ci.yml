@@ -26,3 +26,8 @@ lint:
   script:
     - npm ci --cache .npm --prefer-offline
     - npm run lint
+	
+unit-test:
+  stage: test
+  script:
+    - npm test
