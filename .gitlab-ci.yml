@@ -1,4 +1,4 @@
-image: node-alpine 
+image: node:latest 
 cache: 
   key:
     files:
@@ -18,3 +18,8 @@ install:
   script:
     # define cache dir & use it npm!
     - npm ci --cache .npm --prefer-offline
+	
+lint:
+  stage: validate
+  script:
+    - npm run lint
