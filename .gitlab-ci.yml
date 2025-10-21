@@ -1,11 +1,13 @@
-image: node:latest 
-cache: 
+image: node:latest
+
+cache:
   key:
     files:
-        - package-lock.json
-    paths: 
-      - node_modules/
-      - .npm/
+      - package-lock.json
+  paths: 
+    - node_modules/
+    - .npm/
+
 stages:
   - validate
   - test
@@ -14,11 +16,11 @@ stages:
   - deploy
 
 install:
-  stage: .pre
+  stage: validate
   script:
     # define cache dir & use it npm!
     - npm ci --cache .npm --prefer-offline
-	
+
 lint:
   stage: validate
   script:
