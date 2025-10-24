@@ -1,0 +1,13 @@
+name: CI simple
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
