@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [push, workflow_dispatch]  # push classique + déclenchement manuel
 
 jobs:
   install:
@@ -30,3 +30,38 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm ci --cache .npm --prefer-offline
       - run: npm test
+
+  release:
+    # équivalent de "when: manual" → on ne l’exécute que via "Run workflow"
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    container:
+      image: node:latest
+    needs: [unit-test]
+    permissions:
+      contents: write   # nécessaire pour pousser tags/commits
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: npm ci --cache .npm --prefer-offline
+
+      - name: Config git (email/nom)
+        run: |
+          git config user.email "${GIT_USER_EMAIL}"
+          git config user.name  "${GIT_USER_NAME:-$GITHUB_ACTOR}"
+        env:
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          GIT_USER_NAME:  ${{ secrets.GIT_USER_NAME }}
+
+      - name: Utiliser le token GitHub sur le remote
+        run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git checkout "${GITHUB_REF_NAME}"
+          git pull origin "${GITHUB_REF_NAME}" --rebase
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        run: npx --yes release-it --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_RELEASE }}
