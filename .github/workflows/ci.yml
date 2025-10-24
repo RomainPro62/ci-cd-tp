@@ -40,7 +40,8 @@ jobs:
       - run: npm test
 
   release:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    # lance le job si workflow manuel OU si push sur master
+    if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     container:
       image: node:latest
@@ -56,8 +57,8 @@ jobs:
 
       - name: Config git (email/nom)
         run: |
-          git config user.email "${GIT_USER_EMAIL}"
-          git config user.name  "${GIT_USER_NAME:-$GITHUB_ACTOR}"
+          git config --global user.email "${GIT_USER_EMAIL}"
+          git config --global user.name  "${GIT_USER_NAME:-$GITHUB_ACTOR}"
         env:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GIT_USER_NAME:  ${{ secrets.GIT_USER_NAME }}
