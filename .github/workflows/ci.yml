@@ -74,5 +74,8 @@ jobs:
           git checkout "${GITHUB_REF_NAME}"
           git pull origin "${GITHUB_REF_NAME}" --rebase
 
-      - name: Release
-        run: npx --yes release-it --ci
+      - name: Release (GitHub uniquement)
+        run: npx --yes release-it --ci --no-gitlab --github.release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_RELEASE }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}  # tu peux le laisser, il ne sera pas utilisé
