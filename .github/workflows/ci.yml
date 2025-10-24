@@ -40,7 +40,6 @@ jobs:
       - run: npm test
 
   release:
-    # lance le job si workflow manuel OU si push sur master
     if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     container:
@@ -62,6 +61,10 @@ jobs:
         env:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GIT_USER_NAME:  ${{ secrets.GIT_USER_NAME }}
+
+      # ✅ Corrige "detected dubious ownership"
+      - name: Marquer le repo comme sûr
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Utiliser le token GitHub sur le remote
         run: |
