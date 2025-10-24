@@ -38,38 +38,27 @@ jobs:
       - run: npm test
 
   release:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    container:
-      image: node:latest
-    needs: [unit-test]
-    permissions:
-      contents: write
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_RELEASE }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  if: ${{ github.event_name == 'workflow_dispatch' }}
+  runs-on: ubuntu-latest
+  container:
+    image: node:latest
+  needs: [unit-test]
+  permissions:
+    contents: write
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_RELEASE }}
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
-      - run: npm ci --cache .npm --prefer-offline
+    - run: git fetch --tags --prune --force
 
-      - name: Config git (email/nom)
-        run: |
-          git config --global user.email "${GIT_USER_EMAIL}"
-          git config --global user.name  "${GIT_USER_NAME:-$GITHUB_ACTOR}"
-        env:
-          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-          GIT_USER_NAME:  ${{ secrets.GIT_USER_NAME }}
+    - run: npm ci --cache .npm --prefer-offline
 
-      - name: Marquer le repo comme sûr
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Utiliser le token GitHub sur le remote
-        run: |
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git checkout "${GITHUB_REF_NAME}"
-          git pull origin "${GITHUB_REF_NAME}" --rebase
-
-      - name: Release
-        run: npx --yes release-it --ci --increment patch
+    - name: Config git (email/nom)
+    - name: Marquer le repo comme sûr
+    - name: Utiliser le token GitHub sur le remote
+    - name: Release
+      run: npx --yes release-it --ci --increment patch
