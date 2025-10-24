@@ -53,7 +53,12 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - run: git fetch --tags --prune --force
+      # ✅ Corrige "detected dubious ownership"
+      - name: Marquer le repo comme sûr
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Récupérer tous les tags
+        run: git fetch --tags --prune --force
 
       - run: npm ci --cache .npm --prefer-offline
 
@@ -64,9 +69,6 @@ jobs:
         env:
           GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GIT_USER_NAME:  ${{ secrets.GIT_USER_NAME }}
-
-      - name: Marquer le repo comme sûr
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Utiliser le token GitHub sur le remote
         run: |
