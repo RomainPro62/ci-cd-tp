@@ -1,6 +1,8 @@
 name: CI
 
-on: [push, workflow_dispatch]  # push classique + déclenchement manuel
+on:
+  push
+  workflow_dispatch
 
 jobs:
   install:
