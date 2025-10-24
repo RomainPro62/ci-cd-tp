@@ -72,4 +72,4 @@ jobs:
           git pull origin "${GITHUB_REF_NAME}" --rebase
 
       - name: Release
-        run: npx --yes release-it --ci
+        run: npx --yes release-it --ci --increment patch
